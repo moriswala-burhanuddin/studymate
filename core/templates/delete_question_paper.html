@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+      <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>
+    
+      <h1>{{ title }}</h1>
+    </header>
+   <div class="form-wrapper">
+        <div class="form-container">
+        
+
+   <h1>{{ title }}</h1>
+    <p style="margin-bottom: 20px;">Are you sure you want to delete the question paper "{{ question_paper.title }}"?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="submit-btn">Delete</button>
+          <a href="{% url 'dashboard' %}" class="cancel">Cancel</a>
+    </form>
+
+  
+    </div>
+</div>
+</body>
+</html>

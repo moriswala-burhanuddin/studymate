@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Question Papers</title>
+    <link rel="stylesheet" href="{% static 'css/choose_content.css' %}">
+    <link rel="stylesheet" href="{% static 'css/materials.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Add jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+   <nav class="navbar">
+    <div class="navbar-left">
+        <a href="{% url 'choose_content' %}"><i class='bx bx-book-content'></i> StudyMate</a>
+    </div>
+
+    <!-- Hamburger -->
+    <div class="navbar-toggle" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Menu -->
+    <div class="navbar-right" id="navbar-menu">
+        <a href="{% url 'logout' %}" class="button logout-button">Logout</a>
+    </div>
+</nav>
+
+    <div id="scrollProgress"></div>
+ 
+
+    <div class="search-bar">
+        <form id="search-form" method="get" action="{% url 'student_question_papers' %}">
+            <input type="text" name="q" id="search-input" placeholder="Search for question papers..." value="{{ request.GET.q }}">
+            <button type="submit"><i class='bx bx-search'></i></button>
+        </form>
+    </div>
+
+<div class="subject-filter">
+    <select name="subject" id="subject-select">
+        <option value="">All Subjects</option>
+        {% for subject in available_subjects %}
+            <option value="{{ subject }}" {% if selected_subject == subject %}selected{% endif %}>
+                {{ subject }}
+            </option>
+        {% endfor %}
+    </select>
+    <select name="semester" id="semester-select">
+        <option value="">All Semesters</option>
+        <option value="I" {% if selected_semester == "I" %}selected{% endif %}>Semester I</option>
+        <option value="II" {% if selected_semester == "II" %}selected{% endif %}>Semester II</option>
+    </select>
+</div>
+
+
+    <div class="materials-list" id="materials-list">
+        {% for question_paper in question_papers %}
+        <div class="material-card">
+            <div class="material-title">{{ question_paper.title }} 
+                 <p class="material-subject">{{ question_paper.subject }}</p></div>
+                 <div class="page"></div>
+            <div class="material-actions">
+                {% if question_paper.file_upload %}
+                    <a href="{{ question_paper.file_upload.url }}" download><i class='bx bx-download'></i>Download</a>
+                    <a href="{{ question_paper.file_upload.url }}" target="_blank"><i class='bx bx-show'></i>View</a>
+                {% elif question_paper.drive_link %}
+                    <a href="{{ question_paper.drive_link }}" target="_blank"><i class='bx bx-link-external'></i>View on Drive</a>
+                {% else %}
+                    <span style="color: #999;">Not Available</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="material-card">
+            <div class="material-title">No question papers available for your course.</div>
+        </div>
+        {% endfor %}
+    </div>
+   <footer class="site-footer">
+  <div class="footer-container">
+    <!-- Brand -->
+    <div class="footer-brand">
+      <a href="{% url 'choose_content' %}" class="footer-logo">
+        <i class='bx bx-book-content'></i>
+        <span>StudyMate</span>
+      </a>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+      {% comment %} <a href="{% url 'choose_content' %}">
+        <i class='bx bx-home'></i>
+        <span>Home</span>
+      </a> {% endcomment %}
+      <a href="{% url 'student_materials' %}">
+        <i class='bx bx-book'></i>
+        <span>Materials</span>
+      </a>
+      <a href="{% url 'student_question_papers' %}">
+        <i class='bx bx-file'></i>
+        <span>Papers</span>
+      </a>
+      <a href="{% url 'update_profile' %}">
+        <i class='bx bx-user'></i>
+        <span>Profile</span>
+      </a>
+      <a href="{% url 'logout' %}">
+        <i class='bx bx-log-out'></i>
+        <span>Logout</span>
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <hr class="footer-divider">
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <p>&copy; 2025 StudyMate. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+  <script>
+function getCSRFToken() {
+    var name = 'csrftoken';
+    var value = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return value ? value.pop() : '';
+}
+
+$(document).ready(function() {
+    // Submit form on change of semester or subject
+    $('#semester-select, #subject-select').on('change', function() {
+        $('#search-form').submit();
+    });
+
+    $('#search-form').on('submit', function(e) {
+        e.preventDefault();
+
+        var query = $('#search-input').val();
+        var semester = $('#semester-select').val();
+        var subject = $('#subject-select').val();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'GET',
+            data: { q: query, semester: semester, subject: subject },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-CSRFToken', getCSRFToken());
+            },
+            success: function(response) {
+                $('#materials-list').empty();
+
+                if (response.question_papers && response.question_papers.length > 0) {
+                    response.question_papers.forEach(function(paper, index) {
+                        var card = `
+                            <div class="material-card animate-on-scroll scale-in delay-${index}">
+                                <div class="material-header">
+                                    <h3 class="material-title">${paper.title}</h3>
+                                    <p class="material-subject">${paper.subject}</p>
+                                </div>
+                                 <div class="page"></div>
+                                <div class="material-actions">
+                                    ${paper.file_url ? `
+                                        <a href="${paper.file_url}" download><i class='bx bx-download'></i> Download</a>
+                                        <a href="${paper.file_url}" target="_blank"><i class='bx bx-show'></i> View</a>
+                                    ` : paper.drive_link ? `
+                                        <a href="${paper.drive_link}" target="_blank"><i class='bx bx-link-external'></i> Open Link</a>
+                                    ` : `<span style="color: #999;">Not Available</span>`}
+                                </div>
+                            </div>`;
+                        $('#materials-list').append(card);
+                    });
+                } else {
+                    $('#materials-list').html('<div class="material-card"><div class="material-title">No question papers found.</div></div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error);
+                alert('Error occurred while searching.');
+            }
+        });
+    });
+});
+</script>
+
+
+    
+<button id="backToTop" title="Go to top">↑</button>
+<script src="{% static 'js/materials.js' %}"></script>
+</body>
+</html>

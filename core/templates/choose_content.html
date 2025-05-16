@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome, {{ student.user.username }} - StudyMate</title>
+
+    <link rel="stylesheet" href="{% static 'css/choose_content.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <nav class="navbar">
+    <div class="navbar-left">
+        <a href="{% url 'choose_content' %}"><i class='bx bx-book-content'></i> StudyMate</a>
+    </div>
+
+    <!-- Hamburger -->
+    <div class="navbar-toggle" id="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Menu -->
+    <div class="navbar-right" id="navbar-menu">
+        <a href="{% url 'logout' %}" class="button logout-button">Logout</a>
+    </div>
+</nav>
+
+
+  <!-- Hero Section -->
+<section class="hero animate-on-scroll fade-up delay-1">
+    <h1 class="typing-text" data-username="{{ student.user.username }}"></h1>
+    <p>Choose what you'd like to explore and start learning.</p>
+</section>
+
+    <div id="scrollProgress"></div>
+
+ <div class="d-container">
+    <!-- Profile & Explore -->
+    <section class="container animate-on-scroll fade-left delay-2">
+        <div class="section-header">
+            <i class='bx bx-info-circle'></i>
+            <h2>Student Info</h2>
+        </div>
+        <ul class="student-info">
+            <li><strong>University:</strong> {{ student.university.name }}</li>
+            <li><strong>Course:</strong> {{ student.course.name }}</li>
+            <li><strong>Year:</strong> {{ student.year_or_semester.name }}</li>
+        </ul>
+
+        <div class="section-header">
+            <i class='bx bx-compass'></i>
+            <h2>Explore</h2>
+        </div>
+        <div class="card-grid">
+            <a href="{% url 'student_materials' %}" class="nav-card">
+                <i class='bx bx-book'></i>
+                <span>Study Materials</span>
+            </a>
+            <a href="{% url 'student_question_papers' %}" class="nav-card">
+                <i class='bx bx-file'></i>
+                <span>Question Papers</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Profile Update -->
+    <section class="container-2 animate-on-scroll scale-in delay-3">
+        <div class="section-header">
+            <i class='bx bx-user'></i>
+            <h2>Update Profile</h2>
+        </div>
+        <a href="{% url 'update_profile' %}" class="update-profile">Profile Details!</a>
+    </section>
+</div>
+
+<footer class="site-footer ">
+  <div class="footer-container">
+    <!-- Brand -->
+    <div class="footer-brand">
+      <a href="{% url 'choose_content' %}" class="footer-logo">
+        <i class='bx bx-book-content'></i>
+        <span>StudyMate</span>
+      </a>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+      {% comment %} <a href="{% url 'choose_content' %}">
+        <i class='bx bx-home'></i>
+        <span>Home</span>
+      </a> {% endcomment %}
+      <a href="{% url 'student_materials' %}">
+        <i class='bx bx-book'></i>
+        <span>Materials</span>
+      </a>
+      <a href="{% url 'student_question_papers' %}">
+        <i class='bx bx-file'></i>
+        <span>Papers</span>
+      </a>
+      <a href="{% url 'update_profile' %}">
+        <i class='bx bx-user'></i>
+        <span>Profile</span>
+      </a>
+      <a href="{% url 'logout' %}">
+        <i class='bx bx-log-out'></i>
+        <span>Logout</span>
+      </a>
+    </div>
+
+    <!-- Divider -->
+    <hr class="footer-divider">
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <p>&copy; 2025 StudyMate. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<button id="backToTop" title="Go to top">↑</button>
+<script src="{% static 'js/choose_content.js' %}"></script>
+</body>
+</html>

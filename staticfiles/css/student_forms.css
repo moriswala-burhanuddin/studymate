@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Geist+Mono:wght@100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Sevillana&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Dosis:wght@200..800&family=Geist+Mono:wght@100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Sevillana&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+/* Base Styling */
+body {
+    /* font-family: "Geist Mono", serif; */
+    font-optical-sizing: auto;
+    /* margin-top: 80px; */
+    /* font-family: 'Arial', sans-serif; */
+    font-style: normal;
+    
+    font-family: "Jost", sans-serif;
+    background: #eef4fb;
+    margin: 0;
+    padding: 50px;
+       -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+   
+}
+.logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.logo a{
+    text-decoration: none;
+    margin-left: 10px;
+    font-size: 1.8rem;
+ 
+    &:hover{
+        text-decoration: none;
+    }
+}
+
+/* Container Styling */
+.form-container {
+    background: white;
+    padding: 40px;
+    /* max-width: 400px; */
+    margin: 60px auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    /* height: 550px; */
+}
+
+/* Heading */
+.form-container h2{
+    text-align: center;
+    color:   #004085;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+.form-container .title{
+    font-size: 2rem;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin: 35px 0 5px;
+    color: #333;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #004085;
+}
+
+/* Input Fields */
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* Button */
+button {
+    margin-top: 55px;
+    width: 100%;
+    padding: 14px;
+     background: linear-gradient(135deg, #007bff, #004085);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Text */
+p {
+    margin-top: 20px;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+/* Links */
+a {
+    color: #004085;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Error Message */
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) { 
+    body {
+        padding: 30px 20px;
+    }
+
+    .form-container {
+        padding: 30px 20px;
+        margin: 40px auto;
+        max-width: 90%;
+    }
+
+    .form-container h2 {
+        font-size: 1.6rem;
+    }
+
+    button {
+        font-size: 0.95rem;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 20px 10px;
+    }
+
+    .form-container {
+        padding: 25px 15px;
+        margin: 30px auto;
+    }
+
+    .form-container .title {
+        font-size: 1.4rem; /* Changed from 4rem to 1.4rem */
+    }
+
+    label, input, select, p, .error {
+        font-size: 0.95rem;
+    }
+
+    button {
+        font-size: 0.95rem;
+        padding: 12px;
+    }
+}
+.error {
+    color: red;
+    font-size: 14px;
+    margin: 5px 0 10px;
+    text-align: left;
+}
+/* static/css/custom.css */
+.upload-form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+.upload-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.upload-form button {
+    display: block;
+    margin: auto;
+    padding: 10px 20px;
+}
+
+
+.messages {
+    color: red;
+
+    margin-top: 15px;
+}

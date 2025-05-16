@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+      <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>
+    <h2>Edit Student Information</h2>
+    <p><h3>Student Information</h3></p>
+    </header>
+   <div class="form-wrapper">
+        <div class="form-container">
+             <form method="post">
+        {% csrf_token %}
+        
+        
+        <!-- Display form fields -->
+        {{ form.as_p }}
+        
+        <button type="submit" class="submit-btn">Save Changes</button>
+         <a href="{% url 'dashboard' %}" class="cancel">Back to Dashboard</a>
+    </form>
+
+   
+    </div>
+</div>
+</body>
+</html>

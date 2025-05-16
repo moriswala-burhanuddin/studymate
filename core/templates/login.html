@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Login</title>
+    <link rel="stylesheet" href="{% static 'css/student_forms.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+   <div class="form-container ">
+      <h2>Login</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required class="form-control" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required class="form-control" placeholder="Enter your password">
+        </div>
+           <div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+      <p>Don't have an account? <a href="{% url 'student_signup' %}">Sign up here</a></p>
+   </div>
+   <script>
+     document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable Keyboard Shortcuts for Inspect Element
+  document.addEventListener('keydown', function (event) {
+      if (event.ctrlKey && (event.key === 'u' || event.key === 'U' || event.key === 's' || event.key === 'S' || event.key === 'p' || event.key === 'P')) {
+          event.preventDefault();
+      }
+      if (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) {
+          event.preventDefault();
+      }
+      if (event.key === 'F12') {
+          event.preventDefault();
+      }
+  });
+
+  // Detect DevTools Opening (No alert, just logs)
+  console.log('%c ', 'font-size: 1px; background: url() no-repeat;');
+
+   </script>
+</body>
+</html>

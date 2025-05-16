@@ -1,0 +1,558 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+   <header>
+   <div class="header-content">
+  <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+  <div class="header-actions">
+    <div class="notification-bell" id="notification-bell">
+      <i class="fas fa-bell"></i>
+      <span class="badge" id="notification-count">{{ notifications|length }}</span>
+     
+
+    </div>
+    <button id="dark-mode-toggle" class="dark-mode-btn">
+      <i class="fas fa-moon"></i>
+    </button>
+    <a href="{% url 'admin_logout' %}" class="button logout-button">Logout</a>
+
+  </div>
+</div>
+
+   </header>
+<!-- Notification Panel -->
+<div class="notifications hidden">
+  <ul>
+    {% for note in notifications %}
+      <li class="notification {{ note.type }}">
+        <strong>{{ note.timestamp|date:"d M Y" }}</strong> — {{ note.message }}
+        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+      </li>
+    {% empty %}
+      <li class="notification error">
+        <strong>No recent notifications.</strong>
+        <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const bell = document.getElementById("notification-bell");
+    const notificationPanel = document.querySelector(".notifications");
+    const badge = document.getElementById("notification-count");
+
+    // Hide badge if no notifications or already viewed
+    if (badge && badge.textContent === "0") {
+        badge.style.display = "none";
+    } else {
+        const hasViewed = localStorage.getItem("notificationsViewed");
+        if (hasViewed === "true") {
+            badge.style.display = "none";
+        }
+    }
+
+    // Toggle notification panel
+    bell.addEventListener("click", () => {
+        notificationPanel.classList.toggle("hidden");
+
+        if (!notificationPanel.classList.contains("hidden")) {
+            // User opened the panel
+            if (badge) {
+                badge.style.display = "none";
+                localStorage.setItem("notificationsViewed", "true");
+            }
+        }
+    });
+});
+</script>
+
+ <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const savedTheme = localStorage.getItem('theme');
+          const themeIcon = document.querySelector('#dark-mode-toggle i');
+
+          // Apply dark mode if saved
+          if (savedTheme === 'dark') {
+              document.body.classList.add('dark-mode');
+              document.querySelectorAll('header, .container, .button, table').forEach(element => {
+                  element.classList.add('dark-mode');
+              });
+
+              // Set icon to sun for dark mode
+              themeIcon.classList.remove('fa-moon');
+              themeIcon.classList.add('fa-sun');
+          }
+
+          // Toggle theme
+          const toggleTheme = () => {
+              document.body.classList.toggle('dark-mode');
+              document.querySelectorAll('header, .container, .button, table').forEach(element => {
+                  element.classList.toggle('dark-mode');
+              });
+
+              if (document.body.classList.contains('dark-mode')) {
+                  themeIcon.classList.remove('fa-moon');
+                  themeIcon.classList.add('fa-sun');
+                  localStorage.setItem('theme', 'dark');
+              } else {
+                  themeIcon.classList.remove('fa-sun');
+                  themeIcon.classList.add('fa-moon');
+                  localStorage.setItem('theme', 'light');
+              }
+          };
+
+          document.getElementById('dark-mode-toggle').addEventListener('click', toggleTheme);
+      });
+</script>
+
+    <div class="stats-cards">
+      <div class="card" onclick="window.location.href='{% url 'dashboard' %}?mat_title='"
+           data-tippy-content="View all uploaded study materials">
+          <i class="fas fa-book fa-2x" style="color: #2980b9;"></i>
+          <h3 id="material-count">0</h3>
+          <p>Study Materials</p>
+      </div>
+
+      <div class="card" onclick="window.location.href='{% url 'dashboard' %}?stu_university='"
+           data-tippy-content="View all registered students">
+          <i class="fas fa-user-graduate fa-2x" style="color: #27ae60;"></i>
+          <h3 id="student-count">0</h3>
+          <p>Registered Students</p>
+      </div>
+
+      <div class="card" onclick="window.location.href='{% url 'dashboard' %}?q_title='"
+           data-tippy-content="View all uploaded question papers">
+          <i class="fas fa-file-alt fa-2x" style="color: #e67e22;"></i>
+          <h3 id="question-count">0</h3>
+          <p>Question Papers</p>
+      </div>
+    </div>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+   <script src="https://unpkg.com/tippy.js@6"></script>
+   <script>
+      tippy('[data-tippy-content]');
+   </script>
+
+   <script>
+      function animateCounter(element, endValue, duration = 1000) {
+          let start = 0;
+          let increment = endValue / (duration / 10);
+
+          const counter = setInterval(() => {
+              start += increment;
+              if (start >= endValue) {
+                  start = endValue;
+                  clearInterval(counter);
+              }
+              element.textContent = Math.floor(start);
+          }, 10);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+          animateCounter(document.getElementById("material-count"), {{ materials|length }});
+          animateCounter(document.getElementById("student-count"), {{ students|length }});
+          animateCounter(document.getElementById("question-count"), {{ question_papers|length }});
+      });
+   </script>
+
+
+
+     <!-- Action Buttons -->
+<div class="btns">
+      <a href="{% url 'upload' %}" class="button">Upload New Material</a>
+      <a href="{% url 'upload_question_paper' %}" class="button">Upload Question Paper</a>
+      <a href="{% url 'add_university' %}" class="button">+ Add University</a>
+      <a href="{% url 'add_course' %}" class="button">+ Add Course</a>
+      <a href="{% url 'add_yearsemester' %}" class="button">+ Add Year/Semester</a>
+      <a href="{% url 'add_student' %}" class="button">+ Add Student</a>
+</div>
+
+
+<div class="container">
+      {% if messages %}
+          <div class="messages">
+              {% for message in messages %}
+                  <div class="alert {{ message.tags }}">{{ message }}</div>
+              {% endfor %}
+          </div>
+      {% endif %}
+</div>
+<div class="dashboard-container">
+          <div class="sidebar">
+             <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fa fa-bars"></i>
+        </button>
+              <ul>
+                  <li><a href="#study-materials" onclick="showSection('study-materials')"><i class="fa fa-book"></i> Study Materials</a></li>
+                  <li><a href="#students" onclick="showSection('students')"> <i class="fas fa-user-graduate fa-2x"></i>Students</a></li>
+                  <li><a href="#question-papers" onclick="showSection('question-papers')">
+                    <i class="fas fa-file-alt fa-2x" ></i>Question Papers</a></li>
+              </ul>
+          </div>
+            <div class="main-content">
+                <div id="study-materials" class="content-section">
+                  <div class="filt">
+                      <form method="get" class="filter-form">
+                          <h2>Filter Study Materials</h2>
+                          <input type="text" name="mat_title" placeholder="Title" value="{{ mat_title }}">
+                          <select name="mat_university">
+                              <option value="">All Universities</option>
+                              {% for u in universities %}
+                                  <option value="{{ u.id }}" {% if mat_university == u.id|stringformat:"s" %}selected{% endif %}>{{ u.name }}</option>
+                              {% endfor %}
+                          </select>
+                          <select name="mat_course">
+                              <option value="">All Courses</option>
+                              {% for c in courses %}
+                                  <option value="{{ c.id }}" {% if mat_course == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                              {% endfor %}
+                          </select>
+                          <select name="mat_year">
+                              <option value="">All Years/Semesters</option>
+                              {% for y in years %}
+                                  <option value="{{ y.id }}" {% if mat_year == y.id|stringformat:"s" %}selected{% endif %}>{{ y.name }}</option>
+                              {% endfor %}
+                          </select>
+                        <select name="mat_subject">
+                            <option value="">All Subjects</option>
+                            {% for subject in available_subjects %}
+                                <option value="{{ subject }}" {% if mat_subject == subject %}selected{% endif %}>{{ subject }}</option>
+                            {% endfor %}
+                        </select>
+
+                          <button type="submit">Apply Filter</button>
+                          <a href="{% url 'dashboard' %}">Clear Filter</a>
+                      </form>
+                  </div>
+
+                  <!-- Study Materials Table -->
+                  <table class="materials-table">
+                      <thead>
+                          <tr>
+                              <th>Title</th>
+                              <th>University</th>
+                              <th>Course</th>
+                              <th>Year/Semester</th>
+                              <th>Subject</th>
+                              <th>Material</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for material in materials %}
+                          <tr>
+                              <td>{{ material.title }}</td>
+                              <td>{{ material.university.name }}</td>
+                              <td>{{ material.course.name }}</td>
+                              <td>{{ material.year_or_semester.name }}</td>
+                              <td>{{ material.subject|default:"-" }}</td>
+                              <td class="actions">
+                                  {% if material.file_upload %}
+                                      <a href="{{ material.file_upload.url }}" target="_blank">View File</a>
+                                  {% elif material.drive_link %}
+                                      <a href="{{ material.drive_link }}" target="_blank">Open Link</a>
+                                  {% else %}
+                                      N/A
+                                  {% endif %}
+                              </td>
+                              <td class="actions">
+                                  <a href="{% url 'edit' material.pk %}">Edit</a>
+                                  <a href="{% url 'delete' material.pk %}" onclick="return confirm('Are you sure you want to delete this material?');">Delete</a>
+                              </td>
+                          </tr>
+                          {% empty %}
+                          <tr><td colspan="7">No materials uploaded yet.</td></tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                </div>
+            </div>
+       <div class="main-content">
+    <!-- Students Section -->
+    <div id="students" class="content-section">
+        <div class="filt">
+            <form method="get" class="filter-form">
+                <h2>Filter Students</h2>
+                
+                <!-- Filter by University -->
+                <select name="stu_university">
+                    <option value="">All Universities</option>
+                    {% for u in universities %}
+                        <option value="{{ u.id }}" {% if stu_filters.university == u.id|stringformat:"s" %}selected{% endif %}>{{ u.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filter by Course -->
+                <select name="stu_course">
+                    <option value="">All Courses</option>
+                    {% for c in courses %}
+                        <option value="{{ c.id }}" {% if stu_filters.course == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filter by Year/Semester -->
+                <select name="stu_year">
+                    <option value="">All Years/Semesters</option>
+                    {% for y in years %}
+                        <option value="{{ y.id }}" {% if stu_filters.year == y.id|stringformat:"s" %}selected{% endif %}>{{ y.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filter Button -->
+                <button type="submit">Filter Students</button>
+                <a href="{% url 'dashboard' %}">Clear Filters</a>
+            </form>
+        </div>
+
+        <!-- Students Table -->
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>University</th>
+                    <th>Course</th>
+                    <th>Year/Semester</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td data-label="Username">{{ student.user.username }}</td>
+                    <td data-label="Email">{{ student.user.email }}</td>
+                    <td data-label="Phone">{{ student.phone }}</td>
+                    <td data-label="University">{{ student.university.name }}</td>
+                    <td data-label="Course">{{ student.course.name }}</td>
+                    <td data-label="Year/Semester">{{ student.year_or_semester.name }}</td>
+                    <td data-label="Actions" class="actions">
+                        <a href="{% url 'edit_student' student.id %}">Edit</a>
+                        <a href="{% url 'delete_student' student.id %}" onclick="return confirm('Are you sure you want to delete this student?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">No students found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Question Papers Section -->
+    <div id="question-papers" class="content-section">
+        <div class="filt">
+            <form method="get" class="filter-form" id="qp-filter-form">
+                <h2>Filter Question Papers</h2>
+                
+                <!-- Filter by Title -->
+                <input type="text" name="qp_title" placeholder="Title" value="{{ qp_title }}">
+
+                <!-- Filter by University -->
+                <select name="qp_university">
+                    <option value="">All Universities</option>
+                    {% for u in universities %}
+                        <option value="{{ u.id }}" {% if qp_university == u.id|stringformat:"s" %}selected{% endif %}>{{ u.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filter by Course -->
+                <select name="qp_course">
+                    <option value="">All Courses</option>
+                    {% for c in courses %}
+                        <option value="{{ c.id }}" {% if qp_course == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Filter by Year/Semester -->
+                <select name="qp_year">
+                    <option value="">All Years/Semesters</option>
+                    {% for y in years %}
+                        <option value="{{ y.id }}" {% if qp_year == y.id|stringformat:"s" %}selected{% endif %}>{{ y.name }}</option>
+                    {% endfor %}
+                </select>
+
+               <!-- Filter by Subject for Question Papers -->
+<select name="qp_subject">
+    <option value="">All Subjects</option>
+    {% for subject in available_qp_subjects %}
+        <option value="{{ subject }}" {% if qp_subject == subject %}selected{% endif %}>{{ subject }}</option>
+    {% endfor %}
+</select>
+
+
+                <!-- Filter Button -->
+                <button type="submit">Apply Filter</button>
+                <a href="{% url 'dashboard' %}">Clear Filter</a>
+            </form>
+        </div>
+
+        <h2>Question Papers</h2>
+
+        <!-- Question Papers Table -->
+        <table class="question-papers-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>University</th>
+                    <th>Course</th>
+                    <th>Year/Semester</th>
+                    <th>Subject</th>
+                    <th>Material</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question_paper in question_papers %}
+                <tr>
+                    <td>{{ question_paper.title }}</td>
+                    <td>{{ question_paper.university.name }}</td>
+                    <td>{{ question_paper.course.name }}</td>
+                    <td>{{ question_paper.year_or_semester.name }}</td>
+                    <td>{{ question_paper.subject|default:"-" }}</td>
+                    <td class="actions">
+                        {% if question_paper.file_upload %}
+                            <a href="{{ question_paper.file_upload.url }}" target="_blank">View File</a>
+                        {% elif question_paper.drive_link %}
+                            <a href="{{ question_paper.drive_link }}" target="_blank">Open Link</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        <a href="{% url 'edit_question_paper' question_paper.pk %}">Edit</a>
+                        <a href="{% url 'delete_question_paper' question_paper.pk %}" onclick="return confirm('Are you sure you want to delete this question paper?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">No question papers uploaded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+    <script>
+    $(document).ready(function() {
+        // AJAX filtering
+        $('.filter-form').on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var filterData = $(this).serialize(); // Serialize form data
+
+            $.ajax({
+                type: 'GET',
+                url: window.location.href,
+                data: filterData,
+                success: function(response) {
+                    // Update relevant tables
+                    $('.materials-table tbody').html($(response).find('.materials-table tbody').html());
+                    $('.students-table tbody').html($(response).find('.students-table tbody').html());
+                    $('.question-papers-table tbody').html($(response).find('.question-papers-table tbody').html());
+                }
+            });
+        });
+
+        // Clear filter behavior
+        $('a[href="{% url "dashboard" %}"]').on('click', function(e) {
+            e.preventDefault();
+            $('.filter-form')[0].reset();
+            $('.filter-form').submit();
+        });
+    });
+</script>
+
+<script>
+// Function to toggle the sidebar collapse
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('collapsed'); // This toggles the collapse class
+}
+
+// Function to show the selected section (unchanged)
+function showSection(sectionId) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+
+    // Remove 'active' class from all sidebar links
+    const sidebarLinks = document.querySelectorAll('.sidebar a');
+    sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+
+    // Show the selected section
+    const selectedSection = document.getElementById(sectionId);
+    if (selectedSection) {
+        selectedSection.classList.add('active');
+    }
+
+    // Add 'active' class to the clicked sidebar link
+    const selectedLink = document.querySelector(`.sidebar a[href="#${sectionId}"]`);
+    if (selectedLink) {
+        selectedLink.classList.add('active');
+    }
+}
+
+// Initially show the Study Materials section (or any default section)
+document.addEventListener('DOMContentLoaded', function () {
+    showSection('study-materials'); // Default section to show
+});
+
+</script>
+
+
+<div id="toast-container"></div>
+<script>
+function createToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.classList.add('toast', `toast-${type}`);
+
+    // Add content with close button
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+
+    const container = document.getElementById('toast-container');
+    container.appendChild(toast);
+
+    // Remove toast after 6 seconds unless manually closed
+    setTimeout(() => {
+        if (toast) toast.remove();
+    }, 6000);
+}
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const rows = document.querySelectorAll("tbody tr");
+    rows.forEach((row, index) => {
+        row.style.opacity = 0;
+        row.style.transform = "translateY(15px)";
+        setTimeout(() => {
+            row.style.transition = "all 0.6s ease";
+            row.style.opacity = 1;
+            row.style.transform = "translateY(0)";
+        }, index * 100); // delay based on index
+    });
+});
+
+</script>
+
+</body> 
+</html>

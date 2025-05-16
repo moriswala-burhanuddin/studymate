@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if edit %}Edit{% else %}Upload{% endif %} Study Material</title>
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>{% if edit %}Edit{% else %}Upload{% endif %} Study Material</header>
+     <p class="btn">
+    Missing an option? 
+    <a href="{% url 'add_university' %}" class="button">Add University</a> 
+    <a href="{% url 'add_course' %}" class="button">Add Course</a> 
+    <a href="{% url 'add_yearsemester' %}" class="button">Add Year/Semester</a>
+    </p>
+    <div class="form-wrapper">
+         <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">{% if edit %}Save Changes{% else %}Upload{% endif %}</button>
+            <a href="{% url 'dashboard' %}" class="cancel">Cancel</a>
+        </form>
+    
+         </div>
+         
+    </div>
+   
+</body>
+</html>

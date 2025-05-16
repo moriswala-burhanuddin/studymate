@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Sign Up</title>
+    <link rel="stylesheet" href="{% static 'css/student_forms.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+   <div class="form-container ">
+     <h2>Student Sign-Up</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+   
+        <div class="user-form">
+            {{ user_form.as_p }}
+        </div>
+        
+    
+        <div class="profile-form">
+            {{ profile_form.as_p }}
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit">Sign Up</button>
+    </form>
+    <p>
+        Already have an account? <a href="{% url 'login' %}">Login here</a>
+      </p>
+   </div>
+   <script>
+     document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable Keyboard Shortcuts for Inspect Element
+  document.addEventListener('keydown', function (event) {
+      if (event.ctrlKey && (event.key === 'u' || event.key === 'U' || event.key === 's' || event.key === 'S' || event.key === 'p' || event.key === 'P')) {
+          event.preventDefault();
+      }
+      if (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) {
+          event.preventDefault();
+      }
+      if (event.key === 'F12') {
+          event.preventDefault();
+      }
+  });
+
+  // Detect DevTools Opening (No alert, just logs)
+  console.log('%c ', 'font-size: 1px; background: url() no-repeat;');
+
+   </script>
+</body>
+</html>
